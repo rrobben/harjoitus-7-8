@@ -63,7 +63,6 @@ public class TrainingAdapter extends FirebaseRecyclerAdapter<TrainingEntry, Trai
         holder.mDurationTextView.setText(String.valueOf(model.getDuration()) + " min");
         holder.mSharpnessTextView.setText(String.valueOf(model.getSharpness()));
         holder.mRpeTextView.setText(String.valueOf(model.getRpe()));
-        //holder.itemView.setTag();
     }
 }
 

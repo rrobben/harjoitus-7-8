@@ -24,6 +24,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -73,16 +74,18 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
 
+        Query query = mTrainingDatabaseReference.orderByChild("date");
+
         FirebaseRecyclerOptions<TrainingEntry> options =
                 new FirebaseRecyclerOptions.Builder<TrainingEntry>()
-                        .setQuery(mTrainingDatabaseReference, TrainingEntry.class)
+                        .setQuery(query, TrainingEntry.class)
                         .build();
 
 
         mTrainingAdapter = new TrainingAdapter(options);
         mRecyclerView.setAdapter(mTrainingAdapter);
 
-        /*new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -90,31 +93,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                long id = (long) viewHolder.itemView.getTag();
-                deleteEntry(id);
-                mTrainingAdapter.swapCursor(getAllEntries());
+                deleteEntry(viewHolder.getAdapterPosition());
             }
-        }).attachToRecyclerView(mRecyclerView);*/
+        }).attachToRecyclerView(mRecyclerView);
+    }
 
-        mChildEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                TrainingEntry trainingEntry = dataSnapshot.getValue(TrainingEntry.class);
-                mTrainingDatabaseReference.orderByKey();
-            }
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mTrainingAdapter.startListening();
+    }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        };
-        mTrainingDatabaseReference.addChildEventListener(mChildEventListener);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        mTrainingAdapter.stopListening();
     }
 
     public void addNewEntry(View view) {
@@ -154,15 +147,7 @@ public class MainActivity extends AppCompatActivity {
         mTrainingDatabaseReference.push().setValue(trainingEntry);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mTrainingAdapter.startListening();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        mTrainingAdapter.stopListening();
+    private void deleteEntry(int position) {
+        mTrainingAdapter.getRef(position).removeValue();
     }
 }
