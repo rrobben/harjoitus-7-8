@@ -8,4 +8,5 @@
     <string name="sharpness">CS</string>
     <string name="sport">Sport</string>
     <string name="entry_created">Entry created!</string>
+    <string name="sign_out">Sign out</string>
 </resources>

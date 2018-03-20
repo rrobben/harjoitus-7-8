@@ -18,9 +18,6 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 
 public class TrainingAdapter extends FirebaseRecyclerAdapter<TrainingEntry, TrainingAdapter.TrainingAdapterViewHolder> {
 
-    private Cursor mCursor;
-    private Context mContext;
-
     public TrainingAdapter(FirebaseRecyclerOptions<TrainingEntry> options) {
         super(options);
     }
@@ -64,5 +61,7 @@ public class TrainingAdapter extends FirebaseRecyclerAdapter<TrainingEntry, Trai
         holder.mSharpnessTextView.setText(String.valueOf(model.getSharpness()));
         holder.mRpeTextView.setText(String.valueOf(model.getRpe()));
     }
+
+
 }
 
